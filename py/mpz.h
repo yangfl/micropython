@@ -45,11 +45,20 @@
 // changed so long as the constraints mentioned above are met).
 
 #ifndef MPZ_DIG_SIZE
-  #if defined(__x86_64__) || defined(_WIN64)
-// 64-bit machine, using 32-bit storage for digits
+  #if defined(_WIN64)
     #define MPZ_DIG_SIZE (32)
+  #elif defined(__SIZEOF_LONG__)
+    #if __SIZEOF_LONG__ == 8
+// 64-bit machine, using 32-bit storage for digits
+      #define MPZ_DIG_SIZE (32)
+    #elif __SIZEOF_LONG__ == 4
+      #define MPZ_DIG_SIZE (16)
+    #else
+      #error "__SIZEOF_LONG__ should be 4 or 8"
+    #endif
   #else
 // default: 32-bit machine, using 16-bit storage for digits
+    #warning "__SIZEOF_LONG__ not defined, check your compiler"
     #define MPZ_DIG_SIZE (16)
   #endif
 #endif
